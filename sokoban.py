@@ -2,10 +2,10 @@
 initial_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
+    ['#', '.', '.', '.', '.', '.', '#'],
     ['#', '.', '.', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '#', '.', '#'],
-    ['#', '.', '.', '.', '#', '.', '#'],
-    ['#', '*', '@', '.', '#', '.', '#'],
+    ['#', '.', '*', '.', '#', '.', '#'],
+    ['#', '.', '@', '.', '#', '.', '#'],
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
@@ -13,7 +13,7 @@ initial_state = [
 goal_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '.', '.', '#'],
     ['#', '.', '.', '.', '#', '.', '#'],
     ['#', '.', '.', '.', '#', '.', '#'],
     ['#', '@', '.', '.', '#', '*', '#'],
@@ -68,8 +68,6 @@ def action_function(state, action):
                 # move the player to the new position
                 new_state[new_player_pos[0]][new_player_pos[1]] = '@'
                 new_state[player_pos[0]][player_pos[1]] = '.'
-            else:
-                print("do nothing")
 
 
     # return the new state
@@ -81,7 +79,7 @@ def goal_test(state):
     # check if all boxes are at their target positions
     for i in range(len(state)):
         for j in range(len(state[i])):
-            if state[i][j] == '*' and goal_state[i][j] == '.':
+            if state[i][j] == '*' and ( goal_state[i][j] == '.' or goal_state[i][j] == '@'):
                 return False
             elif state[i][j] == '.' and goal_state[i][j] == '*':
                 return False
