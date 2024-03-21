@@ -1,4 +1,4 @@
-# définir l'état initial du jeu
+# define initial state of the game
 initial_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
@@ -9,7 +9,7 @@ initial_state = [
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
-# définir l'état final du jeu
+# define goal state of the game
 goal_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
@@ -20,21 +20,21 @@ goal_state = [
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
-# définir les actions possibles
+# define possible actions
 actions = ['up', 'down', 'left', 'right']
 
-# définir la fonction d'action
+# define action function
 def action_function(state, action):
-    # créer une copie de l'état courant
+    # create a copy of the current state
     new_state = [row[:] for row in state]
 
-    # obtenir la position actuelle du joueur
+    # get the current player position
     for i in range(len(state)):
         for j in range(len(state[i])):
             if state[i][j] == '@':
                 player_pos = (i, j)
 
-    # calculer la nouvelle position du joueur
+    # calculate the new player position
     new_player_pos = None
     if action == 'up':
         new_player_pos = (player_pos[0] - 1, player_pos[1])
@@ -45,30 +45,30 @@ def action_function(state, action):
     elif action == 'right':
         new_player_pos = (player_pos[0], player_pos[1] + 1)
 
-    # vérifier si la nouvelle position est valide
+    # check if the new position is valid
     if new_player_pos is not None and new_state[new_player_pos[0]][new_player_pos[1]] != '#':
-        # vérifier s'il y a une caisse à la nouvelle position
+        # check if there is a box at the new position
         if new_state[new_player_pos[0]][new_player_pos[1]] == '.':
-            # déplacer le joueur à la nouvelle position
+            # move the player to the new position
             new_state[new_player_pos[0]][new_player_pos[1]] = '@'
             new_state[player_pos[0]][player_pos[1]] = '.'
         elif new_state[new_player_pos[0]][new_player_pos[1]] == '*':
-            # vérifier si la caisse peut être poussée
+            # check if the box can be pushed
             new_box_pos = (new_player_pos[0] + (-1 if action == 'up' else 1), new_player_pos[1] + (-1 if action == 'left' else 1))
             if new_state[new_box_pos[0]][new_box_pos[1]] == '.':
-                # déplacer la caisse à la nouvelle position
+                # move the box to the new position
                 new_state[new_box_pos[0]][new_box_pos[1]] = '*'
                 new_state[new_player_pos[0]][new_player_pos[1]] = '.'
-                # déplacer le joueur à la nouvelle position
+                # move the player to the new position
                 new_state[new_player_pos[0]][new_player_pos[1]] = '@'
                 new_state[player_pos[0]][player_pos[1]] = '.'
 
-    # retourner le nouvel état
+    # return the new state
     return new_state
 
-# définir la fonction de test de but
+# define goal test function
 def goal_test(state):
-    # vérifier si toutes les caisses sont à leurs positions cibles
+    # check if all boxes are at their target positions
     for i in range(len(state)):
         for j in range(len(state[i])):
             if state[i][j] == '*' and goal_state[i][j] == '.':
@@ -77,7 +77,7 @@ def goal_test(state):
                 return False
     return True
 
-# définir la fonction pour générer tous les états suivants possibles
+# define function to generate all possible next states
 def generate_next_states(state):
     next_states = []
     for action in actions:
@@ -85,4 +85,3 @@ def generate_next_states(state):
         if new_state not in next_states:
             next_states.append(new_state)
     return next_states
-
