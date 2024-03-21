@@ -2,10 +2,10 @@
 initial_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '@', '*', '.', '.', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '#'],
+    ['#', '.', '*', '.', '.', '.', '#'],
+    ['#', '@', '.', '.', '.', '.', '#'],
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
@@ -14,9 +14,9 @@ goal_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '@', '.', '.', '.', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '*', '#'],
+    ['#', '.', '.', '.', '.', '.', '#'],
+    ['#', '@', '.', '.', '.', '*', '#'],
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
@@ -54,11 +54,17 @@ def action_function(state, action):
             new_state[player_pos[0]][player_pos[1]] = '.'
         elif new_state[new_player_pos[0]][new_player_pos[1]] == '*':
             # check if the box can be pushed
-            new_box_pos = (new_player_pos[0] + (-1 if action == 'up' else 1), new_player_pos[1] + (-1 if action == 'left' else 1))
+            if action == 'up':
+                new_box_pos = (new_player_pos[0] -1 , new_player_pos[1])
+            elif action == 'down':
+                new_box_pos = (new_player_pos[0] + 1 , new_player_pos[1])
+            elif action == 'left':
+                new_box_pos = (new_player_pos[0], new_player_pos[1] - 1)
+            elif action == 'right':
+                new_box_pos = (new_player_pos[0], new_player_pos[1] + 1)
             if new_state[new_box_pos[0]][new_box_pos[1]] == '.':
                 # move the box to the new position
                 new_state[new_box_pos[0]][new_box_pos[1]] = '*'
-                new_state[new_player_pos[0]][new_player_pos[1]] = '.'
                 # move the player to the new position
                 new_state[new_player_pos[0]][new_player_pos[1]] = '@'
                 new_state[player_pos[0]][player_pos[1]] = '.'
