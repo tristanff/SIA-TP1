@@ -2,10 +2,10 @@
 initial_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '*', '.', '.', '.', '#'],
-    ['#', '@', '.', '.', '.', '.', '#'],
+    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '*', '@', '.', '#', '.', '#'],
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
@@ -13,10 +13,10 @@ initial_state = [
 goal_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '.', '.', '.', '.', '.', '#'],
-    ['#', '@', '.', '.', '.', '*', '#'],
+    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '.', '.', '.', '#', '.', '#'],
+    ['#', '@', '.', '.', '#', '*', '#'],
     ['#', '#', '#', '#', '#', '#', '#']
 ]
 
@@ -62,15 +62,19 @@ def action_function(state, action):
                 new_box_pos = (new_player_pos[0], new_player_pos[1] - 1)
             elif action == 'right':
                 new_box_pos = (new_player_pos[0], new_player_pos[1] + 1)
-            if new_state[new_box_pos[0]][new_box_pos[1]] == '.':
+            if state[new_box_pos[0]][new_box_pos[1]] != '#':
                 # move the box to the new position
                 new_state[new_box_pos[0]][new_box_pos[1]] = '*'
                 # move the player to the new position
                 new_state[new_player_pos[0]][new_player_pos[1]] = '@'
                 new_state[player_pos[0]][player_pos[1]] = '.'
+            else:
+                print("do nothing")
+
 
     # return the new state
     return new_state
+
 
 # define goal test function
 def goal_test(state):
@@ -91,3 +95,16 @@ def generate_next_states(state):
         if new_state not in next_states:
             next_states.append(new_state)
     return next_states
+
+# define function to print the state
+def print_state(state):
+    for row in state:
+        print(' '.join(row))
+
+# define function to get user action from keyboard
+def get_user_action():
+    valid_actions = {'z': 'up', 's': 'down', 'q': 'left', 'd': 'right'}
+    while True:
+        user_input = input().lower()
+        if user_input in valid_actions:
+            return valid_actions[user_input]
