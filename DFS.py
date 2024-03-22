@@ -1,7 +1,7 @@
 import sokoban
 import time from time
 
-def print_results
+def print_results(sokoban)
 def DFS(sokoban):
     nodes_generated = 0
     nodes_repeated = 0
