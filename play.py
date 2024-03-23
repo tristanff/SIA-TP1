@@ -8,6 +8,8 @@ def main():
         action = get_user_action()  # get the user action from the keyboard
         state = action_function(state, action)  # update the state with the new action
         if goal_test(state):  # check if the game is won
+            os.system('clear')
+            print_state(state)
             print("You win!")
             break
 

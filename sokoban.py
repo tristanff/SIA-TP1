@@ -1,3 +1,5 @@
+import getch
+
 # define initial state of the game
 initial_state = [
     ['#', '#', '#', '#', '#', '#', '#'],
@@ -63,7 +65,7 @@ def action_function(state, action):
                 new_box_pos = (new_player_pos[0], new_player_pos[1] - 1)
             elif action == 'right':
                 new_box_pos = (new_player_pos[0], new_player_pos[1] + 1)
-            if state[new_box_pos[0]][new_box_pos[1]] != '#':
+            if state[new_box_pos[0]][new_box_pos[1]] != '#' and state[new_box_pos[0]][new_box_pos[1]] != '*':
                 # move the box to the new position
                 new_state[new_box_pos[0]][new_box_pos[1]] = '*'
                 # move the player to the new position
@@ -102,8 +104,8 @@ def print_state(state):
 
 # define function to get user action from keyboard
 def get_user_action():
-    valid_actions = {'z': 'up', 's': 'down', 'q': 'left', 'd': 'right'}
+    valid_actions = {'w': 'up', 's': 'down', 'a': 'left', 'd': 'right'}
     while True:
-        user_input = input().lower()
+        user_input = getch.getch() # formerly input().lower()
         if user_input in valid_actions:
             return valid_actions[user_input]
