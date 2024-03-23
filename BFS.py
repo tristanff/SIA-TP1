@@ -69,7 +69,7 @@ def main():
         print(f"Frontier nodes: {frontier_nodes}")
         # print the board state of each step
         for i, state in enumerate(solution):
-            print(f"Step {i}:") # starts at step 0 (initial state)
+            print(f"Step {i + 1}:") # starts at step 0 (initial state)
             print_state(state) 
             print()
     else:

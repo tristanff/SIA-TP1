@@ -3,7 +3,6 @@ from sokoban import initial_state, goal_test, generate_next_states, goal_state
 import heapq
 import time
 
-
 # Define Manhattan distance heuristic function
 def manhattan_distance(state):
     distance = 0
@@ -102,7 +101,6 @@ def astar(initial_state):
         'Tiempo de procesamiento': end_time - start_time
     }
 
-
 # Define function to reconstruct path from goal node to start node
 def reconstruct_path(node):
     path = []
@@ -110,10 +108,6 @@ def reconstruct_path(node):
         path.append(node.state)
         node = node.parent
     return path[::-1]
-
-
-
-
 
 # call the A* search algorithm
 def main():
@@ -124,10 +118,11 @@ def main():
     for key, value in result.items():
         print(f"{key}: {value}")
     solucion = result["Solución"];
-    for steps in solucion:
+    for i, steps in enumerate(solucion):
+        print(f"Step {i + 1}:") # starts at step 0 (initial state)
         for line in steps:
-            print(f"{line}")
-        print("-------------------")
+            print(" ".join(line))
+        print()
 
 if __name__ == "__main__":
     main()
