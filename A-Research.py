@@ -1,10 +1,10 @@
 # importer les fonctions nécessaires depuis game.py
-from sokoban import initial_state, goal_test, generate_next_states, goal_state
+from sokoban import *
 import heapq
 import time
 
 # Define Manhattan distance heuristic function
-def manhattan_distance(state):
+def manhattan_distance(state,goal_state):
     distance = 0
     for i in range(len(state)):
         for j in range(len(state[i])):
@@ -23,7 +23,7 @@ def manhattan_distance(state):
     return distance
 
 # Define Misplaced Tiles heurisitic function
-def misplaced_tiles(state):
+def misplaced_tiles(state,goal_state):
     heuristic = 0
     for i in range(len(state)):
         for j in range(len(state[i])):
@@ -44,11 +44,11 @@ class Node:
         return (self.g + self.h) < (other.g + other.h)
 
 # Define A* algorithm function
-def astarMan(initial_state):
+def astarMan(initial_state,goal_state):
     start_time = time.time()
 
     # Initialize start node
-    start_node = Node(initial_state, g=0, h=manhattan_distance(initial_state))
+    start_node = Node(initial_state, g=0, h=manhattan_distance(initial_state,goal_state))
 
     # Initialize open and closed sets
     open_set = []
@@ -67,15 +67,15 @@ def astarMan(initial_state):
         current_node = heapq.heappop(open_set)
 
         # Check if current node is goal state
-        if goal_test(current_node.state):
+        if goal_test(current_node.state,goal_state):
             end_time = time.time()
             return {
-                'Resultado': 'Éxito',
-                'Costo de la solución': current_node.g,
-                'Cantidad de nodos expandidos': nodes_expanded,
-                'Cantidad de nodos frontera': len(open_set),
-                'Solución': reconstruct_path(current_node),
-                'Tiempo de procesamiento en segundos': round(end_time - start_time, 2)
+                'State': 'Success',
+                'Cost': current_node.g,
+                'NodesExpanded': nodes_expanded,
+                'FrontierNodes': len(open_set),
+                'Solution': reconstruct_path(current_node),
+                'ProcessTime': round(end_time - start_time, 2)
             }
 
         # Add current node to closed set
@@ -89,7 +89,7 @@ def astarMan(initial_state):
         for next_state in next_states:
             # Create a new node for the next state
             next_node = Node(next_state, parent=current_node, action=None, g=current_node.g + 1,
-                             h=manhattan_distance(next_state))
+                             h=manhattan_distance(next_state,goal_state))
 
             # Check if the next state is already visited or in the open set with lower cost
             if tuple(map(tuple, next_state)) in closed_set:
@@ -102,19 +102,19 @@ def astarMan(initial_state):
         # If open set is empty and goal state not found, return failure
     end_time = time.time()
     return {
-        'Resultado': 'Fracaso',
-        'Costo de la solución': None,
-        'Cantidad de nodos expandidos': nodes_expanded,
-        'Cantidad de nodos frontera': len(open_set),
-        'Solución': None,
-        'Tiempo de procesamiento en segundos': round(end_time - start_time, 2)
+        'State': 'Failed',
+        'Cost': None,
+        'NodesExpanded': nodes_expanded,
+        'FrontierNodes': len(open_set),
+        'Solution': None,
+        'ProcessTime': round(end_time - start_time, 2)
     }
 
-def astarMisplaced(initial_state):
+def astarMisplaced(initial_state,goal_state):
     start_time = time.time()
 
     # Initialize start node
-    start_node = Node(initial_state, g=0, h=misplaced_tiles(initial_state))
+    start_node = Node(initial_state, g=0, h=misplaced_tiles(initial_state,goal_state))
 
     # Initialize open and closed sets
     open_set = []
@@ -133,15 +133,15 @@ def astarMisplaced(initial_state):
         current_node = heapq.heappop(open_set)
 
         # Check if current node is goal state
-        if goal_test(current_node.state):
+        if goal_test(current_node.state, goal_state):
             end_time = time.time()
             return {
-                'Resultado': 'Éxito',
-                'Costo de la solución': current_node.g,
-                'Cantidad de nodos expandidos': nodes_expanded,
-                'Cantidad de nodos frontera': len(open_set),
-                'Solución': reconstruct_path(current_node),
-                'Tiempo de procesamiento  en segundos': round(end_time - start_time,2)
+                'State': 'Success',
+                'Cost': current_node.g,
+                'NodesExpanded': nodes_expanded,
+                'FrontierNodes': len(open_set),
+                'Solution': reconstruct_path(current_node),
+                'ProcessTime': round(end_time - start_time,2)
             }
 
         # Add current node to closed set
@@ -155,7 +155,7 @@ def astarMisplaced(initial_state):
         for next_state in next_states:
             # Create a new node for the next state
             next_node = Node(next_state, parent=current_node, action=None, g=current_node.g + 1,
-                             h=misplaced_tiles(next_state))
+                             h=misplaced_tiles(next_state,goal_state))
 
             # Check if the next state is already visited or in the open set with lower cost
             if tuple(map(tuple, next_state)) in closed_set:
@@ -168,12 +168,12 @@ def astarMisplaced(initial_state):
         # If open set is empty and goal state not found, return failure
     end_time = time.time()
     return {
-        'Resultado': 'Fracaso',
-        'Costo de la solución': None,
-        'Cantidad de nodos expandidos': nodes_expanded,
-        'Cantidad de nodos frontera': len(open_set),
-        'Solución': None,
-        'Tiempo de procesamiento  en segundos': round(end_time - start_time, 2)
+        'State': 'Failed',
+        'Cost': None,
+        'NodesExpanded': nodes_expanded,
+        'FrontierNodes': len(open_set),
+        'Solution': None,
+        'ProcessTime': round(end_time - start_time, 2)
     }
 
 # Define function to reconstruct path from goal node to start node
@@ -188,25 +188,25 @@ def reconstruct_path(node):
 def main():
     # Run A* algorithm
     print("############# A* with MANHATTAN DISTANCE heuristic ################# \n")
-    resultMan = astarMan(initial_state)
+    resultMan = astarMan(initial_state_level2,goal_state_level2)
 
     # Print results
     for key, value in resultMan.items():
-        if(key != "Solución"):
+        if(key != "Solution"):
             print(f"{key}: {value}")
-    solucion = resultMan["Solución"]
+    solucion = resultMan["Solution"]
     for i, steps in enumerate(solucion):
         print(f"Step {i + 1}:") # starts at step 0 (initial state)
         for line in steps:
             print(" ".join(line))
 
     print("############# A* with MISPLACED TILES heuristic ################# \n")
-    resultMisp = astarMisplaced(initial_state)
+    resultMisp = astarMisplaced(initial_state_level2,goal_state_level2)
 
     for key, value in resultMisp.items():
-        if (key != "Solución"):
+        if (key != "Solution"):
             print(f"{key}: {value}")
-    solucion = resultMisp["Solución"]
+    solucion = resultMisp["Solution"]
     for i, steps in enumerate(solucion):
         print(f"Step {i + 1}:")  # starts at step 0 (initial state)
         for line in steps:
