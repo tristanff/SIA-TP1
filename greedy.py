@@ -4,28 +4,27 @@ from sokoban import initial_state, goal_test, generate_next_states, goal_state, 
 import os
 
 
-# Check if point is a corner
-def is_corner(state, i, j):
-    if (state[i - 1][j] == '#') and (state[i][j - 1] == '#'):
-        return True
-    elif (state[i - 1][j] == '#') and (state[i][j + 1] == '#'):
-        return True
-    elif (state[i + 1][j] == '#') and (state[i][j - 1] == '#'):
-        return True
-    elif (state[i + 1][j] == '#') and (state[i][j + 1] == '#'):
-        return True
-    return False
-
-
-# Check if point is a border
-def is_border(state, i, j):
-    if (state[i - 1][j] == '#') or (state[i + 1][j]  == '#') or (state[i][j - 1] == '#') or (state[i][j + 1] == '#'):
-        return True
-    return False
-
-
 # Check if state would lead into a deadlock
 def check_deadlock(state):
+
+    # Check if point is a corner
+    def is_corner(state, i, j):
+        if (state[i - 1][j] == '#') and (state[i][j - 1] == '#'):
+            return True
+        elif (state[i - 1][j] == '#') and (state[i][j + 1] == '#'):
+            return True
+        elif (state[i + 1][j] == '#') and (state[i][j - 1] == '#'):
+            return True
+        elif (state[i + 1][j] == '#') and (state[i][j + 1] == '#'):
+            return True
+        return False
+
+    # Check if point is a border
+    def is_border(state, i, j):
+        if (state[i - 1][j] == '#') or (state[i + 1][j]  == '#') or (state[i][j - 1] == '#') or (state[i][j + 1] == '#'):
+            return True
+        return False
+
     for i in range(len(state)):
         for j in range(len(state[i])):
             if state[i][j] == '*':
@@ -88,34 +87,44 @@ def manhattan_distance(state, goal_state, origin = '*', destination = '*'):
                 distance += abs(box_pos[0] - target_pos[0]) + abs(box_pos[1] - target_pos[1])
     return distance
 
+# Check if move playable
+def playable(state, action):
+    return not (state == action_function(state, action))
+
 
 # Greedy search algorithm
-def greedy(state):
-    iterations = 0
-    while not goal_test(state) and iterations < 1000:
+def greedy(state, max_iter):
+
+    # Initialize iteration count
+    iteration = 0
+    
+    # Record step list
+    steps = []
+    
+    # Search until goal reached or exceed iteration limit
+    while not goal_test(state) and iteration < max_iter:
+    
         # Print game state
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("\t game state")
+        print(f"Step #{iteration + 1}")
         print_state(state)
 
         # Get possible moves
         next_states = generate_next_states(state)
 
-        # Infinitely large value to initialize min
-        min_heuristic = float('inf')
+        # Initialize variables to pick best action
         best_action = None
-
         heuristics = dict.fromkeys(actions)
 
         # Determine move based on lowest heuristic
         for action, next_state in zip(actions, next_states):
-            if not check_deadlock(next_state):
-                heuristics[action] = 3*manhattan_distance(next_state, goal_state, '*', '*') # manhattan_distance(next_state, next_state, '@', '*')
-                print(action)
-            else:
-                print("deadlock risk")
+        
+            # Verify if player can move and if move leads to known deadlock situation
+            if playable(state, action) and not check_deadlock(next_state):
+                heuristics[action] = manhattan_distance(next_state, goal_state, '*', '*') # manhattan_distance(next_state, next_state, '@', '*')
 
-        print(heuristics)
+        # Heuristics scores (None = unplayable/deadlock)
+        print("Heuristics:", heuristics)
 
         # Get minimum value keys
         min_value = min(value for value in heuristics.values() if value is not None)
@@ -129,12 +138,13 @@ def greedy(state):
             break
 
         # Update game state
+        steps.append([state, heuristics]    )
         state = action_function(state, best_action)
 
         # Iteration count
-        iterations += 1
+        iteration += 1
         time.sleep(0.01)
-    return state
+    return state, steps
 
 
 def main():
@@ -142,7 +152,7 @@ def main():
     start_time = time.time()
 
     # Perform Greedy search
-    state = greedy(initial_state)
+    state, steps = greedy(initial_state, 100)
 
     # Measure the end time
     end_time = time.time()
@@ -150,11 +160,23 @@ def main():
     # Calculate the total time taken
     total_time = end_time - start_time
 
+    # Results
+    print()
+    print(f"Time elapsed: {round(total_time, 2)}s")
+    print(f"Iterations: {len(steps)}")
+    
     if goal_test(state):
         print("Solution found!")
-    else :
+    else:
         print("No solution found")
-
+    
+    reply = input("\nPrint step history? [y/n] ").lower()
+    
+    if reply == 'y':
+        for i, step in enumerate(steps):
+            print(f"\nStep {i+1}")
+            print_state(step[0])
+            print(step[1])
 
 if __name__ == "__main__":
     main()
