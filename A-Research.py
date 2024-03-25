@@ -14,7 +14,7 @@ def manhattan_distance(state):
                 # Find the closest target position
                 for x in range(len(goal_state)):
                     for y in range(len(goal_state[x])):
-                        if goal_state[x][y] == '.':
+                        if goal_state[x][y] == '*':
                             target_pos = (x, y)
                             break
                     if target_pos:
@@ -22,11 +22,12 @@ def manhattan_distance(state):
                 distance += abs(box_pos[0] - target_pos[0]) + abs(box_pos[1] - target_pos[1])
     return distance
 
+# Define Misplaced Tiles heurisitic function
 def misplaced_tiles(state):
     heuristic = 0
     for i in range(len(state)):
         for j in range(len(state[i])):
-            if state[i][j] != goal_state[i][j] and (state[i][j] != '#' or state[i][j] != '@'):
+            if state[i][j] != goal_state[i][j] and (state[i][j] != '#' or state[i][j] != '@'): # We don't care about final player Position
                 heuristic += 1
     return heuristic
 
@@ -74,7 +75,7 @@ def astarMan(initial_state):
                 'Cantidad de nodos expandidos': nodes_expanded,
                 'Cantidad de nodos frontera': len(open_set),
                 'Solución': reconstruct_path(current_node),
-                'Tiempo de procesamiento': end_time - start_time
+                'Tiempo de procesamiento en segundos': round(end_time - start_time, 2)
             }
 
         # Add current node to closed set
@@ -106,7 +107,7 @@ def astarMan(initial_state):
         'Cantidad de nodos expandidos': nodes_expanded,
         'Cantidad de nodos frontera': len(open_set),
         'Solución': None,
-        'Tiempo de procesamiento': end_time - start_time
+        'Tiempo de procesamiento en segundos': round(end_time - start_time, 2)
     }
 
 def astarMisplaced(initial_state):
@@ -140,7 +141,7 @@ def astarMisplaced(initial_state):
                 'Cantidad de nodos expandidos': nodes_expanded,
                 'Cantidad de nodos frontera': len(open_set),
                 'Solución': reconstruct_path(current_node),
-                'Tiempo de procesamiento': end_time - start_time
+                'Tiempo de procesamiento  en segundos': round(end_time - start_time,2)
             }
 
         # Add current node to closed set
@@ -172,7 +173,7 @@ def astarMisplaced(initial_state):
         'Cantidad de nodos expandidos': nodes_expanded,
         'Cantidad de nodos frontera': len(open_set),
         'Solución': None,
-        'Tiempo de procesamiento': end_time - start_time
+        'Tiempo de procesamiento  en segundos': round(end_time - start_time, 2)
     }
 
 # Define function to reconstruct path from goal node to start node
@@ -186,6 +187,7 @@ def reconstruct_path(node):
 # call the A* search algorithm
 def main():
     # Run A* algorithm
+    print("############# A* with MANHATTAN DISTANCE heuristic ################# \n")
     resultMan = astarMan(initial_state)
 
     # Print results
@@ -198,7 +200,7 @@ def main():
         for line in steps:
             print(" ".join(line))
 
-    print("############# MISPLACED ################# \n")
+    print("############# A* with MISPLACED TILES heuristic ################# \n")
     resultMisp = astarMisplaced(initial_state)
 
     for key, value in resultMisp.items():
