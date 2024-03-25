@@ -1,10 +1,10 @@
 import sokoban
-from time import time
+import time
 
 
-#Define the DFS function
+#Define DFS-search function
 def dfs_search(initial_state, goal_state):
-    start = time() # Start-time of DFS
+    start_time = time.time() # Start-time of DFS
     stack = [(initial_state, [])]  # Stack to store states and their corresponding actions
     visited = set()  # Set to keep track of visited states
     expanded_nodes = 0  # Counter for expanded nodes
@@ -14,8 +14,8 @@ def dfs_search(initial_state, goal_state):
         current_state, actions = stack.pop()  # Get the current state and its actions
         expanded_nodes += 1 # Adding expanded nodes
         if current_state == goal_state:  # Check if the current state is the goal state
-            end = time() # End-time of DFS
-            return actions, expanded_nodes, frontier_nodes, end - start  # Return the actions that lead to the goal state
+            end_time = time.time() # End-time of DFS
+            return actions, expanded_nodes, frontier_nodes, end_time - start_time  # Return the actions that lead to the goal state
 
         visited.add(tuple(map(tuple, current_state)))  # Mark the current state as visited
 
@@ -27,22 +27,32 @@ def dfs_search(initial_state, goal_state):
     return None  # If no solution is found, return None
 
 
-# Perform DFS search
-solution, expanded_nodes, frontier_nodes, time_taken = dfs_search(sokoban.initial_state, sokoban.goal_state)
-
-# Print solution if found
-if solution:
-    print("Solution found! time taken: ", time_taken, "seconds") # Prin the solution and time
-    print("total amount of steps: ", len(solution)) # Print steps taken
-    print("Expanded nodes:", expanded_nodes)  # Print the number of expanded nodes
-    print("Frontier nodes:", frontier_nodes)  # Print the number of nodes in the frontier
-
-    for i, state in enumerate(solution): #Print step by step to solution
-        print(f"Step {i + 1}:") # Print which step on
-        sokoban.print_state(state)
-        print() # Print the current board
 
 
+#Define DFS-print funcion
+def dfs_print(solution,expanded_nodes,frontier_nodes, time_taken):
+        if solution:
+            print("Solution found! time taken: {:.5f} seconds".format(time_taken)) #Print the solution and time
+            print("total amount of steps: ", len(solution)) # Print steps taken
+            print("Expanded nodes:", expanded_nodes)  # Print the number of expanded nodes
+            print("Frontier nodes:", frontier_nodes)  # Print the number of nodes in the frontier
 
-else:
-    print("No solution found.") # Print if no solution is find
+            for i, state in enumerate(solution): #Print step by step to solution
+                print(f"Step {i + 1}:") # Print which step on
+                sokoban.print_state(state)
+                print() #Print the current board
+        else:
+            print("No solution found.") # Print if no solution is find
+
+
+#call DFS-function
+def main():
+    initial_state = sokoban.initial_state
+    goal_state = sokoban.goal_state
+
+    solution, expanded_nodes, frontier_nodes, time_taken = dfs_search(sokoban.initial_state, sokoban.goal_state)
+    dfs_print(solution, expanded_nodes, frontier_nodes, time_taken)
+
+
+if __name__ == "__main__":
+    main()
