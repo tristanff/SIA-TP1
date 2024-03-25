@@ -30,7 +30,7 @@ def dfs_search(initial_state, goal_state):
 # Define DFS-print function
 def dfs_print(solution, expanded_nodes, frontier_nodes, time_taken):
     if solution:
-        print("Solution found! Time taken: {:.5f} seconds".format(time_taken))  # Print the solution and time
+        print("Solution found! Time taken: {:.2f} seconds".format(time_taken))  # Print the solution and time
         print("Total amount of steps: ", len(solution))  # Print steps taken
         print("Expanded nodes:", expanded_nodes)  # Print the number of expanded nodes
         print("Frontier nodes:", frontier_nodes)  # Print the number of nodes in the frontier
