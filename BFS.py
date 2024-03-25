@@ -64,7 +64,7 @@ def main():
     if solution:
         print("Solution found!")
         print(f"Total number of steps: {len(solution) - 1}") # print total steps -1 since initial state doesn't count
-        print(f"Total time to find the solution: {total_time} seconds")
+        print("Total time to find the solution: {:.2f} seconds".format(total_time))
         print(f"Expanded nodes: {expanded_nodes}")
         print(f"Frontier nodes: {frontier_nodes}")
         # print the board state of each step
