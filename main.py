@@ -7,7 +7,7 @@ import numpy as np
 
 def main():
     # Define the number of iterations to run for each level
-    num_iterations = 1
+    num_iterations = 5
 
     # Define the levels
     levels = [1, 2, 3]
@@ -67,6 +67,9 @@ def main():
                                     i, time in enumerate(manhattan_avg_process_times)]
     misplaced_process_time_error = [100 * (time - misplaced_avg_process_times[i]) / misplaced_avg_process_times[i] for
                                     i, time in enumerate(misplaced_avg_process_times)]
+
+    manhattan_std_error = np.mean(manhattan_process_time_error)
+    misplaced_std_error = np.mean(misplaced_process_time_error)
 
     # Plot the comparison between A* with Manhattan Distance and A* with Misplaced Tiles heuristics for all levels
     fig, ax = plt.subplots(figsize=(10, 6))

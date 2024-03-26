@@ -9,7 +9,7 @@ Implementacion de un juego de Sokoban en Python con diferentes algoritmos de bus
 `$ python play.py` para jugar al Sokoban manualmente con las teclas 'wasd' \
 `$ python DFS.py [nivel]` para resolver el Sokoban con un algoritmo Depth-First Search \
 `$ python BFS.py [nivel]` para resolver el Sokoban con un algoritmo Breadth-First Search \
-`$ python A-Research.py [nivel]` para resolver el Sokoban con un algoritmo A* \
+`$ python astar.py [nivel]` para resolver el Sokoban con un algoritmo A* \
 `$ python Greedy.py [nivel]` para resolver el Sokoban con un algoritmo Greedy
 
 (entrar un valor entre 1 y 3 para el nivel)
