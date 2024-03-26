@@ -5,6 +5,7 @@ from sokoban import *
 import heapq
 import time
 
+
 # Define Manhattan distance heuristic function
 def manhattan_distance(state,goal_state):
     distance = 0
@@ -77,7 +78,7 @@ def astarMan(initial_state,goal_state):
                 'NodesExpanded': nodes_expanded,
                 'FrontierNodes': len(open_set),
                 'Solution': reconstruct_path(current_node),
-                'ProcessTime': round(end_time - start_time, 2)
+                'ProcessTime': end_time - start_time
             }
 
         # Add current node to closed set
@@ -109,7 +110,7 @@ def astarMan(initial_state,goal_state):
         'NodesExpanded': nodes_expanded,
         'FrontierNodes': len(open_set),
         'Solution': None,
-        'ProcessTime': round(end_time - start_time, 2)
+        'ProcessTime': end_time - start_time
     }
 
 def astarMisplaced(initial_state,goal_state):
@@ -143,7 +144,7 @@ def astarMisplaced(initial_state,goal_state):
                 'NodesExpanded': nodes_expanded,
                 'FrontierNodes': len(open_set),
                 'Solution': reconstruct_path(current_node),
-                'ProcessTime': round(end_time - start_time,2)
+                'ProcessTime': end_time - start_time
             }
 
         # Add current node to closed set
@@ -175,7 +176,7 @@ def astarMisplaced(initial_state,goal_state):
         'NodesExpanded': nodes_expanded,
         'FrontierNodes': len(open_set),
         'Solution': None,
-        'ProcessTime': round(end_time - start_time, 2)
+        'ProcessTime': end_time - start_time
     }
 
 # Define function to reconstruct path from goal node to start node
