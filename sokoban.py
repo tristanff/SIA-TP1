@@ -36,8 +36,6 @@ goal_state_level2 = [
     ['#', '#', '#', '#', '#', '#'],
 ]
 
-
-
 initial_state_level3 = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', '.', '.', '.', '.', '.', '#'],
@@ -119,11 +117,9 @@ def action_function(state, action):
 # define goal test function
 def goal_test(state,goal_state):
     # check if all boxes are at their target positions
-    for i in range(len(state)):
-        for j in range(len(state[i])):
-            if state[i][j] == '*' and ( goal_state[i][j] == '.' or goal_state[i][j] == '@'):
-                return False
-            elif state[i][j] == '.' and goal_state[i][j] == '*':
+    for i in range(len(goal_state)):
+        for j in range(len(goal_state[i])):
+            if (goal_state[i][j] == '*') and not (state[i][j] == '*'):
                 return False
     return True
 
