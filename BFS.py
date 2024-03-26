@@ -1,7 +1,8 @@
 import time
-from sokoban import initial_state, goal_test, generate_next_states, print_state
+from sokoban import goal_test, generate_next_states, print_state, initial_state_level1, goal_state_level1, initial_state_level2, goal_state_level2, initial_state_level3, goal_state_level3
+import sys
 
-def bfs_solve(initial_state):
+def bfs_solve(initial_state, goal_state):
     # Initialize the frontier with the initial state
     frontier = [initial_state]
     # Initialize an empty set to keep track of visited states
@@ -19,7 +20,7 @@ def bfs_solve(initial_state):
         expanded_nodes += 1
 
         # Check if the current state is the goal state
-        if goal_test(current_state):
+        if goal_test(current_state, goal_state):
             # Return the path to the goal state along with statistics
             return reconstruct_path(parent, current_state), expanded_nodes, frontier_nodes
         
@@ -51,29 +52,44 @@ def reconstruct_path(parent, state):
     return path
 
 def main():
-    # Measure the start time
-    start_time = time.time()
-    # Perform BFS search
-    solution, expanded_nodes, frontier_nodes = bfs_solve(initial_state)
-    # Measure the end time
-    end_time = time.time()
-    # Calculate the total time taken
-    total_time = end_time - start_time
-
-    # Print the solution if found
-    if solution:
-        print("Solution found!")
-        print(f"Total number of steps: {len(solution) - 1}") # print total steps -1 since initial state doesn't count
-        print("Total time to find the solution: {:.2f} seconds".format(total_time))
-        print(f"Expanded nodes: {expanded_nodes}")
-        print(f"Frontier nodes: {frontier_nodes}")
-        # print the board state of each step
-        for i, state in enumerate(solution):
-            print(f"Step {i + 1}:") # starts at step 0 (initial state)
-            print_state(state) 
-            print()
+    # Levels to load
+    levels = {'1': [initial_state_level1, goal_state_level1], \
+              '2': [initial_state_level2, goal_state_level2], \
+              '3': [initial_state_level3, goal_state_level3]}
+    
+    
+    # Check if level was entered 
+    if sys.argv[1] not in levels.keys():
+        print("Please enter a valid level")
+    
     else:
-        print("No solution found.")
+        # Retrieve level requested by user
+        initial_state = levels[sys.argv[1]][0]
+        goal_state = levels[sys.argv[1]][1]
+
+        # Measure the start time
+        start_time = time.time()
+        # Perform BFS search
+        solution, expanded_nodes, frontier_nodes = bfs_solve(initial_state, goal_state)
+        # Measure the end time
+        end_time = time.time()
+        # Calculate the total time taken
+        total_time = end_time - start_time
+
+        # Print the solution if found
+        if solution:
+            print("Solution found!")
+            print(f"Total number of steps: {len(solution) - 1}") # print total steps -1 since initial state doesn't count
+            print("Total time to find the solution: {:.2f} seconds".format(total_time))
+            print(f"Expanded nodes: {expanded_nodes}")
+            print(f"Frontier nodes: {frontier_nodes}")
+            # print the board state of each step
+            for i, state in enumerate(solution):
+                print(f"Step {i + 1}:") # starts at step 0 (initial state)
+                print_state(state) 
+                print()
+        else:
+            print("No solution found.")
 
 if __name__ == "__main__":
     main()

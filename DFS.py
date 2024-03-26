@@ -1,6 +1,7 @@
 import sokoban
+from sokoban import initial_state_level1, goal_state_level1, initial_state_level2, goal_state_level2, initial_state_level3, goal_state_level3
 import time
-
+import sys
 
 # Define DFS-search function
 def dfs_search(initial_state, goal_state):
@@ -45,8 +46,23 @@ def dfs_print(solution, expanded_nodes, frontier_nodes, time_taken):
 
 # Call DFS-function
 def main():
-    solution, expanded_nodes, frontier_nodes, time_taken = dfs_search(sokoban.initial_state, sokoban.goal_state)
-    dfs_print(solution, expanded_nodes, frontier_nodes, time_taken)
+    # Levels to load
+    levels = {'1': [initial_state_level1, goal_state_level1], \
+              '2': [initial_state_level2, goal_state_level2], \
+              '3': [initial_state_level3, goal_state_level3]}
+    
+    
+    # Check if level was entered 
+    if sys.argv[1] not in levels.keys():
+        print("Please enter a valid level")
+    
+    else:
+        # Retrieve level requested by user
+        initial_state = levels[sys.argv[1]][0]
+        goal_state = levels[sys.argv[1]][1]
+    
+        solution, expanded_nodes, frontier_nodes, time_taken = dfs_search(initial_state, goal_state)
+        dfs_print(solution, expanded_nodes, frontier_nodes, time_taken)
 
 
 if __name__ == "__main__":

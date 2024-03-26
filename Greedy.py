@@ -212,6 +212,7 @@ def main():
               '2': [initial_state_level2, goal_state_level2], \
               '3': [initial_state_level3, goal_state_level3]}
     
+    
     # Check if level was entered 
     if sys.argv[1] not in levels.keys():
         print("Please enter a valid level")
