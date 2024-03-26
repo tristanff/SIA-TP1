@@ -1,7 +1,7 @@
 import sokoban
-from sokoban import initial_state_level1, goal_state_level1, initial_state_level2, goal_state_level2, initial_state_level3, goal_state_level3
 import time
-import sys
+import matplotlib.pyplot as plt
+
 
 # Define DFS-search function
 def dfs_search(initial_state, goal_state):
@@ -28,42 +28,48 @@ def dfs_search(initial_state, goal_state):
     return None, frontier_nodes, expanded_nodes  # If no solution is found, return None + stats
 
 
-# Define DFS-print function
-def dfs_print(solution, expanded_nodes, frontier_nodes, time_taken):
-    if solution:
-        print("Solution found! Time taken: {:.2f} seconds".format(time_taken))  # Print the solution and time
-        print("Total amount of steps: ", len(solution))  # Print steps taken
-        print("Expanded nodes:", expanded_nodes)  # Print the number of expanded nodes
-        print("Frontier nodes:", frontier_nodes)  # Print the number of nodes in the frontier
-
-        for i, state in enumerate(solution):  # Print step-by-step to solution
-            print(f"Step {i + 1}:")  # Print which step on
-            sokoban.print_state(state)
-            print()  # Print the current board
-    else:
-        print("No solution found.")  # Print if no solution is found
-
-
-# Call DFS-function
+# Call DFS-function for each level
 def main():
-   print("Enter a level")  # Choosing of level
-    level_choice = input().strip()
     # Levels to load
-    levels = {'1': [initial_state_level1, goal_state_level1],
-              '2': [initial_state_level2, goal_state_level2],
-              '3': [initial_state_level3, goal_state_level3]}
+    levels = {'1': [sokoban.initial_state_level1, sokoban.goal_state_level1],
+              '2': [sokoban.initial_state_level2, sokoban.goal_state_level2],
+              '3': [sokoban.initial_state_level3, sokoban.goal_state_level3]}
 
-    while level_choice not in levels.keys():  # Message if wrong level
-        print("Please enter a valid level")
-        level_choice = input().strip()
+    dfs_data = {}
 
-    if level_choice in levels.keys():
-        # Retrieve level requested by user
-        initial_state = levels[level_choice][0]
-        goal_state = levels[level_choice][1]
-    
+    for level, (initial_state, goal_state) in levels.items():
         solution, expanded_nodes, frontier_nodes, time_taken = dfs_search(initial_state, goal_state)
-        dfs_print(solution, expanded_nodes, frontier_nodes, time_taken)
+        dfs_data[level] = {'solution': solution, 'expanded_nodes': expanded_nodes, 'frontier_nodes': frontier_nodes,
+                           'time_taken': time_taken}
+
+    # Plot data for each level
+    for level, data in dfs_data.items():
+        print(f"Level {level}:")
+        if data['solution']:
+            print("Solution found! Time taken: {:.2f} seconds".format(data['time_taken']))
+            print("Total amount of steps: ", len(data['solution']))
+            print("Expanded nodes:", data['expanded_nodes'])
+            print("Frontier nodes:", data['frontier_nodes'])
+            # Plot the data
+            plt.plot(level, data['time_taken'], marker='o', label=f'Level {level}')
+        else:
+            print("No solution found.")
+
+    plt.figure(figsize=(10, 6))
+    for level, data in dfs_data.items():
+        if data['solution']:
+            plt.plot(level, data['time_taken'], marker='o', label=f'Level {level} - DFS')
+        else:
+            plt.plot(level, 0, marker='o', label=f'Level {level} - DFS (No solution)')
+
+    # Customize plot
+    plt.xlabel('Level')
+    plt.ylabel('Time taken (seconds)')
+    plt.title('DFS Time Taken for Each Level')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()  # Adjust layout to prevent clipping of labels
+    plt.show()
 
 
 if __name__ == "__main__":
