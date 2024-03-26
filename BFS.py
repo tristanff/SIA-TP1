@@ -1,6 +1,6 @@
 import time
-from sokoban import goal_test, generate_next_states, print_state, initial_state_level1, goal_state_level1, initial_state_level2, goal_state_level2, initial_state_level3, goal_state_level3
-import sys
+import matplotlib.pyplot as plt
+import sokoban
 
 def bfs_solve(initial_state, goal_state):
     # Initialize the frontier with the initial state
@@ -20,17 +20,17 @@ def bfs_solve(initial_state, goal_state):
         expanded_nodes += 1
 
         # Check if the current state is the goal state
-        if goal_test(current_state, goal_state):
+        if sokoban.goal_test(current_state, goal_state):
             # Return the path to the goal state along with statistics
             return reconstruct_path(parent, current_state), expanded_nodes, frontier_nodes
-        
+
         # Mark the current state as visited
-        visited.add(str(current_state))
+        visited.add(tuple(map(tuple, current_state)))
 
         # Generate all possible next states
-        for next_state in generate_next_states(current_state):
+        for next_state in sokoban.generate_next_states(current_state):
             # Check if the next state has not been visited
-            if str(next_state) not in visited:
+            if tuple(map(tuple, next_state)) not in visited:
                 # Add the next state to the frontier
                 frontier.append(next_state)
                 # Increment the count of frontier nodes
@@ -52,22 +52,12 @@ def reconstruct_path(parent, state):
     return path
 
 def main():
-    print("Enter a level")  # Choosing of level
-    level_choice = input().strip()
-    # Levels to load
-    levels = {'1': [initial_state_level1, goal_state_level1],
-              '2': [initial_state_level2, goal_state_level2],
-              '3': [initial_state_level3, goal_state_level3]}
+    levels = {'1': [sokoban.initial_state_level1, sokoban.goal_state_level1],
+              '2': [sokoban.initial_state_level2, sokoban.goal_state_level2],
+              '3': [sokoban.initial_state_level3, sokoban.goal_state_level3]}
 
-    while level_choice not in levels.keys():  # Message if wrong level
-        print("Please enter a valid level")
-        level_choice = input().strip()
-
-    if level_choice in levels.keys():
-        # Retrieve level requested by user
-        initial_state = levels[level_choice][0]
-        goal_state = levels[level_choice][1]
-
+    bfs_data = {}
+    for level, (initial_state, goal_state) in levels.items():
         # Measure the start time
         start_time = time.time()
         # Perform BFS search
@@ -76,21 +66,36 @@ def main():
         end_time = time.time()
         # Calculate the total time taken
         total_time = end_time - start_time
+        bfs_data[level] = {'solution': solution, 'expanded_nodes': expanded_nodes, 'frontier_nodes': frontier_nodes, 'time_taken': total_time}
 
         # Print the solution if found
         if solution:
             print("Solution found!")
-            print(f"Total number of steps: {len(solution) - 1}") # print total steps -1 since initial state doesn't count
+            print(f"Total number of steps: {len(solution) - 1}")  # print total steps -1 since initial state doesn't count
             print("Total time to find the solution: {:.2f} seconds".format(total_time))
             print(f"Expanded nodes: {expanded_nodes}")
             print(f"Frontier nodes: {frontier_nodes}")
-            # print the board state of each step
+            # Print the board state of each step
             for i, state in enumerate(solution):
-                print(f"Step {i + 1}:") # starts at step 0 (initial state)
-                print_state(state) 
+                print(f"Step {i + 1}:")  # starts at step 1 (initial state)
+                sokoban.print_state(state)
                 print()
         else:
             print("No solution found.")
+
+    # Plotting BFS time taken for each level
+    levels_list = []
+    times_list = []
+    for level, data in bfs_data.items():
+        levels_list.append(level)
+        times_list.append(data['time_taken'])
+
+    plt.plot(levels_list, times_list, marker='o')
+    plt.xlabel('Level')
+    plt.ylabel('Time taken (seconds)')
+    plt.title('BFS Time Taken for Each Level')
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
     main()
