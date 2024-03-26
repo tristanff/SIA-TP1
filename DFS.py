@@ -46,19 +46,28 @@ def main():
     for level, data in dfs_data.items():
         print(f"Level {level}:")
         if data['solution']:
-            print("Solution found! Time taken: {:.2f} seconds".format(data['time_taken']))
+            print("Solution found! Time taken: {:.2f} seconds".format(time_taken))
             print("Total amount of steps: ", len(data['solution']))
-            print("Expanded nodes:", data['expanded_nodes'])
-            print("Frontier nodes:", data['frontier_nodes'])
-            # Plot the data
+            print("Expanded nodes:", {data['expanded_nodes']})
+            print("Frontier nodes:", {data['frontier_nodes']})
+            for i, state in enumerate(data['solution']):  # Use data['solution'] instead of solution
+                print(f"Step {i + 1}:")  # starts at step 1 (initial state)
+                sokoban.print_state(state)
+                print()
+            # Plot the data points
             plt.plot(level, data['time_taken'], marker='o', label=f'Level {level}')
+
         else:
             print("No solution found.")
 
-    plt.figure(figsize=(10, 6))
+    # Plotting lines connecting the data points
     for level, data in dfs_data.items():
         if data['solution']:
-            plt.plot(level, data['time_taken'], marker='o', label=f'Level {level} - DFS')
+            plt.plot(level, data['time_taken'], marker='o', color='blue')  # Plot data points
+            # Connect data points with lines
+            for i in range(len(level) - 1):
+                plt.plot([level[i], level[i + 1]], [data['time_taken'], data['time_taken']], color='blue',
+                         linestyle='--')
         else:
             plt.plot(level, 0, marker='o', label=f'Level {level} - DFS (No solution)')
 
