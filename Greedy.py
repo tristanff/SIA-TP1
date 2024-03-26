@@ -45,7 +45,7 @@ def check_deadlock(state, next_state, goal_state):
             if next_state[i][j] == '*':
                 if is_border(next_state, i, j):
                     # Box in corner = deadlock
-                    if is_corner(next_state, i, j) and (next_state[i][j] != '*'):
+                    if is_corner(next_state, i, j) and (goal_state[i][j] != '*'):
                         return True
                     else:
                         # Box on border between two corners = deadlock
@@ -107,7 +107,7 @@ def misplaced_tiles(state,goal_state):
     heuristic = 0
     for i in range(len(state)):
         for j in range(len(state[i])):
-            if state[i][j] != goal_state[i][j] and (state[i][j] != '#' or state[i][j] != '@'):
+            if (state[i][j] == '*') and (goal_state[i][j] == '*'):
                 heuristic += 1
     return heuristic
 
@@ -127,7 +127,7 @@ def generate_next_states(state):
 
 
 # Greedy search algorithm
-def greedy(state, goal_state, max_iter):
+def greedy(state, goal_state, heur, max_iter):
     
     # Measure the start time
     start_time = time.time()
@@ -162,18 +162,25 @@ def greedy(state, goal_state, max_iter):
            
             # Verify if player can move and if move leads to known deadlock situation
             if playable(state, action) and not check_deadlock(state, next_state, goal_state):
-                heuristics[action] = manhattan_distance(next_state, goal_state)
+                if heur == 'misplaced':
+                    heuristics[action] = misplaced_tiles(next_state, goal_state)
+                elif heur == 'manhattan':
+                    heuristics[action] = manhattan_distance(next_state, goal_state)
                 frontier += 1
 
         # Heuristics scores (None = unplayable/deadlock)
         print("Heuristics:", heuristics)
 
-        # Get minimum value keys
-        min_value = min(value for value in heuristics.values() if value is not None)
-        min_keys = [key for key, value in heuristics.items() if value == min_value]
+        # Get best value keys
+        if heur == 'misplaced':
+            best_value = max(value for value in heuristics.values() if value is not None)
+        elif heur == 'manhattan':
+            best_value = min(value for value in heuristics.values() if value is not None)
+                        
+        best_keys = [key for key, value in heuristics.items() if value == best_value]
 
         # Pick min heuristic and choose randomly if several moves have same value
-        best_action = random.choice(min_keys)
+        best_action = random.choice(best_keys)
 
         # Goal reached or no valid moves - end search
         if goal_test(state, goal_state) or best_action == None:
@@ -234,49 +241,38 @@ def main():
     
     # Run algorithm
     else:
-    
-        # Retrieve level requested by user
-        initial_state = levels[sys.argv[1]][0]
-        goal_state = levels[sys.argv[1]][1]
-
-        """
-        results = []
-
-        for i in range(1000):
+        
+        # Apply both heuristic methods
+        heur_names = ['misplaced', 'manhattan']
+      
+        for heur in heur_names:
+        
+            # Retrieve level requested by user
+            initial_state = levels[sys.argv[1]][0]
+            goal_state = levels[sys.argv[1]][1]
+                
+        
             # Perform Greedy search
-            result = greedy(initial_state, goal_state, 1000)
-            results.append(result)
-            """
-    
-        # Perform Greedy search
-        result = greedy(initial_state, goal_state, 1000)
+            result = greedy(initial_state, goal_state, heur, 1000)
 
-        # Results
-        print(f"Status: {result['Status']}")
-        print(f"Time elapsed: {result['ProcessTime']}s")
-        print(f"Iterations: {result['Cost']}")
-        print(f"Nodes expanded: {result['NodesExpanded']}")
-        print(f"Frontier nodes: {result['FrontierNodes']}")
+            # Print heuristic
+            print(f"############# GREEDY with {heur} heuristic ################# \n")
+
+            # Results
+            print(f"Status: {result['Status']}")
+            print(f"Time elapsed: {result['ProcessTime']}s")
+            print(f"Iterations: {result['Cost']}")
+            print(f"Nodes expanded: {result['NodesExpanded']}")
+            print(f"Frontier nodes: {result['FrontierNodes']}")
+            
+            reply = input("\nPrint step history? [y/n] ").lower()
+            
+            if reply in ['y', ''] :
+                for i, step in enumerate(result['Steps']):
+                    print(f"\nStep {i}")
+                    print_state(step[0])
+                    print(step[1])
         
-        reply = input("\nPrint step history? [y/n] ").lower()
-        
-        if reply in ['y', ''] :
-            for i, step in enumerate(result['Steps']):
-                print(f"\nStep {i}")
-                print_state(step[0])
-                print(step[1])
-        
-        """
-        import matplotlib.pyplot as plt
-        costs = [result['ProcessTime'] for result in results]
-        print(costs)
-        plt.hist(costs, len(set(costs)))
-        plt.xlabel("Time elapsed")
-        plt.ylabel("Count")
- 
-        plt.title("Distribution of time needed to solve Sokoban level 1 (1000 samples)")
-        plt.show()
-        """
 
 if __name__ == "__main__":
     main()
