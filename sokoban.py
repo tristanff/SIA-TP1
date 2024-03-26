@@ -1,4 +1,11 @@
-import getch
+import platform
+
+o_system = platform.system()  # detecting the operating system
+if o_system == 'Windows':
+    import keyboard  # importing keyboard for Windows
+else:
+    import getch  # importing getch
+
 
 # define initial state of the game
 
@@ -141,6 +148,15 @@ def print_state(state):
 def get_user_action():
     valid_actions = {'w': 'up', 's': 'down', 'a': 'left', 'd': 'right'}
     while True:
-        user_input = getch.getch() # formerly input().lower()
-        if user_input in valid_actions:
-            return valid_actions[user_input]
+        if o_system == "Windows":  # actions for Windows
+            event = keyboard.read_event()
+            if event.event_type == keyboard.KEY_DOWN and event.name in valid_actions:
+                return valid_actions[event.name]  # returning corresponding action
+            else:
+                return None  # if non-valid returning nothing
+        else:  # for non-Windows systems
+            user_input = getch.getch()  # formerly input().lower()
+            if user_input in valid_actions:
+                return valid_actions[user_input]  # returning corresponding action
+            else:
+                return None  # if non-valid returning nothing
