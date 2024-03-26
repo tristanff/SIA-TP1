@@ -135,6 +135,10 @@ def greedy(state, goal_state, max_iter):
     # Initialize iteration count
     iteration = 0
     
+    # Record node amounts
+    frontier = 0
+    expanded = 0
+    
     # Record step list
     steps = []
     
@@ -159,6 +163,7 @@ def greedy(state, goal_state, max_iter):
             # Verify if player can move and if move leads to known deadlock situation
             if playable(state, action) and not check_deadlock(state, next_state, goal_state):
                 heuristics[action] = manhattan_distance(next_state, goal_state)
+                frontier += 1
 
         # Heuristics scores (None = unplayable/deadlock)
         print("Heuristics:", heuristics)
@@ -195,10 +200,20 @@ def greedy(state, goal_state, max_iter):
     # Calculate the total time taken
     total_time = end_time - start_time
     
+    # Count unique steps
+    unique_steps = []
+    count = 0
+    for step in steps:
+        if step not in unique_steps:
+            count += 1
+            unique_steps.append(step)
+    
     return {
         'Status': ('Success' if goal_test(state, goal_state) else 'Failed'),
         'State': state,
         'Cost': iteration,
+        'NodesExpanded': len(unique_steps),
+        'FrontierNodes': frontier - len(unique_steps),
         'Solution': (state if goal_test(state, goal_state) else None),
         'ProcessTime': round(total_time, 2),
         'Steps': steps
@@ -224,25 +239,44 @@ def main():
         initial_state = levels[sys.argv[1]][0]
         goal_state = levels[sys.argv[1]][1]
 
+        """
+        results = []
+
+        for i in range(1000):
+            # Perform Greedy search
+            result = greedy(initial_state, goal_state, 1000)
+            results.append(result)
+            """
+    
         # Perform Greedy search
         result = greedy(initial_state, goal_state, 1000)
 
         # Results
+        print(f"Status: {result['Status']}")
         print(f"Time elapsed: {result['ProcessTime']}s")
         print(f"Iterations: {result['Cost']}")
-          
-        if goal_test(result['State'], goal_state):
-            print("Solution found!")
-        else:
-            print("No solution found")
+        print(f"Nodes expanded: {result['NodesExpanded']}")
+        print(f"Frontier nodes: {result['FrontierNodes']}")
         
         reply = input("\nPrint step history? [y/n] ").lower()
         
         if reply in ['y', ''] :
             for i, step in enumerate(result['Steps']):
-                print(f"\nStep {i+1}")
+                print(f"\nStep {i}")
                 print_state(step[0])
                 print(step[1])
+        
+        """
+        import matplotlib.pyplot as plt
+        costs = [result['ProcessTime'] for result in results]
+        print(costs)
+        plt.hist(costs, len(set(costs)))
+        plt.xlabel("Time elapsed")
+        plt.ylabel("Count")
+ 
+        plt.title("Distribution of time needed to solve Sokoban level 1 (1000 samples)")
+        plt.show()
+        """
 
 if __name__ == "__main__":
     main()
