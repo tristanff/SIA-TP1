@@ -1,4 +1,6 @@
 # importer les fonctions nécessaires depuis game.py
+import sys
+
 from sokoban import *
 import heapq
 import time
@@ -185,10 +187,23 @@ def reconstruct_path(node):
     return path[::-1]
 
 # call the A* search algorithm
-def main():
-    # Run A* algorithm
+def main(level):
+    if level == 1:
+        initial_state = initial_state_level1
+        goal_state = goal_state_level1
+    elif level == 2:
+        initial_state = initial_state_level2
+        goal_state = goal_state_level2
+    elif level == 3:
+        initial_state = initial_state_level3
+        goal_state = goal_state_level3
+    else:
+        print("Invalid level number. Please enter 1, 2, or 3.")
+        return
+
+    # Run A* algorithm with Manhattan Distance heuristic
     print("############# A* with MANHATTAN DISTANCE heuristic ################# \n")
-    resultMan = astarMan(initial_state_level2,goal_state_level2)
+    resultMan = astarMan(initial_state, goal_state)
 
     # Print results
     for key, value in resultMan.items():
@@ -200,8 +215,9 @@ def main():
         for line in steps:
             print(" ".join(line))
 
+    # Run A* algorithm with Misplaced Tiles heuristic
     print("############# A* with MISPLACED TILES heuristic ################# \n")
-    resultMisp = astarMisplaced(initial_state_level2,goal_state_level2)
+    resultMisp = astarMisplaced(initial_state, goal_state)
 
     for key, value in resultMisp.items():
         if (key != "Solution"):
@@ -213,4 +229,8 @@ def main():
             print(" ".join(line))
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        level = int(sys.argv[1])
+        main(level)
+    else:
+        print("Please provide a level number as an argument.")
